@@ -1,59 +1,64 @@
 <!DOCTYPE html>
 <html lang="zh-CN" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IT面试题库管理系统</title>
-  <meta name="description" content="纯静态IT各岗位面试题库管理系统，覆盖完整技术体系与岗位体系，支持本地浏览、搜索、收藏、刷题、模拟面试与AI智能出题。" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232563EB'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='white' font-family='monospace' font-weight='bold'%3EI%3C/text%3E%3C/svg%3E" />
-  <!-- highlight.js theme (light + dark, toggled by theme) -->
-  <link id="hljs-light" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.9.0/styles/github.min.css" />
-  <link id="hljs-dark" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.9.0/styles/github-dark.min.css" disabled />
-  <!-- App styles -->
-  <link rel="stylesheet" href="css/variables.css" />
-  <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="css/animations.css" />
-  <link rel="stylesheet" href="css/responsive.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IT面试题库管理系统 — 覆盖21大技术领域，100+岗位的面试题库</title>
+  <meta name="description" content="纯静态IT面试题库管理系统，覆盖21大技术领域、100+技术子分类、所有主流IT岗位。支持AI生成面试题、模拟面试、刷题练习、批量导入导出。">
+  <meta name="keywords" content="IT面试题, Java面试, 前端面试, 后端面试, 算法面试, 系统设计, 面试题库">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💻</text></svg>">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <script>
+    // Global error handler for debugging
+    window.onerror = function(msg, url, line, col, error) {
+      var el = document.getElementById('error-display');
+      if (el) {
+        el.style.display = 'block';
+        el.innerHTML = '<strong>JavaScript Error:</strong> ' + msg + '<br>at ' + (url||'') + ':' + line + ':' + col;
+      }
+    };
+    window.addEventListener('unhandledrejection', function(e) {
+      var el = document.getElementById('error-display');
+      if (el) {
+        el.style.display = 'block';
+        el.innerHTML = '<strong>Promise Error:</strong> ' + (e.reason?.message || e.reason || 'unknown');
+      }
+    });
+  </script>
+
+  <!-- CDN Libraries -->
+  <script src="https://unpkg.com/vue@3.4.21/dist/vue.global.prod.js"></script>
+  <script src="https://unpkg.com/dexie@3.2.6/dist/dexie.js"></script>
+  <script src="https://unpkg.com/fuse.js@7.0.0/dist/fuse.basic.min.js"></script>
+  <script src="https://unpkg.com/marked@12.0.1/marked.min.js"></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <!-- App root -->
   <div id="app">
-    <!-- Header -->
-    <header id="topbar"></header>
-    <!-- Side drawer (mobile) -->
-    <div id="drawer-mask" class="drawer-mask hidden"></div>
-    <!-- Main layout -->
-    <div id="layout" class="layout">
-      <aside id="sidebar" class="sidebar"></aside>
-      <main id="main" class="main"></main>
+    <!-- Error display -->
+    <div id="error-display" style="display:none;position:fixed;top:0;left:0;right:0;background:#FEF2F2;color:#DC2626;padding:16px;z-index:9999;font-family:monospace;font-size:13px;border-bottom:2px solid #EF4444"></div>
+    <!-- Initial loading state -->
+    <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg,#F8FAFC);flex-direction:column;gap:16px">
+      <div style="width:48px;height:48px;border:4px solid #E2E8F0;border-top-color:#2563EB;border-radius:50%;animation:spin 0.8s linear infinite"></div>
+      <p style="color:#64748B;font-size:15px;font-family:-apple-system,sans-serif">正在初始化IT面试题库...</p>
+      <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
     </div>
-    <!-- Footer -->
-    <footer id="footer"></footer>
   </div>
 
-  <!-- Toast container -->
-  <div id="toast-root" class="toast-root"></div>
-  <!-- Modal root -->
-  <div id="modal-root"></div>
-
-  <!-- Third-party libraries (CDN) -->
-  <script src="https://cdn.jsdelivr.net/npm/dexie@3.2.7/dist/dexie.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.9.0/highlight.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
-
-  <!-- App modules (plain scripts, shared window.App namespace) -->
-  <script src="data/seed.js"></script>
+  <!-- Scripts -->
   <script src="js/utils.js"></script>
   <script src="js/db.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/search.js"></script>
-  <script src="js/aiprompts.js"></script>
-  <script src="js/api.js"></script>
-  <script src="js/services.js"></script>
-  <script src="js/importexport.js"></script>
+  <script src="js/data-categories.js"></script>
+  <script src="js/data-questions.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
