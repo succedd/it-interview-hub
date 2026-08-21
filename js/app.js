@@ -2,6 +2,7 @@
    IT面试题库管理系统 - 主应用 (Vue 3)
    ============================================ */
 const { createApp, ref, reactive, computed, watch, onMounted, nextTick } = Vue;
+console.log('app.js loaded, Vue available:', !!Vue);
 
 const App = {
   setup() {
@@ -534,5 +535,14 @@ ${jdPrompt}${techInfo}
 };
 
 // ---- Mount ----
-const app = createApp(App);
-app.mount('#app');
+console.log('Attempting to mount Vue app...');
+try {
+  const app = createApp(App);
+  console.log('App created');
+  app.mount('#app');
+  console.log('App mounted successfully!');
+} catch(e) {
+  console.error('FATAL: Failed to mount app:', e);
+  document.getElementById('error-display').style.display = 'block';
+  document.getElementById('error-display').innerHTML = '<strong>FATAL Error:</strong> ' + e.message + '<br><pre>' + (e.stack || '') + '</pre>';
+}
