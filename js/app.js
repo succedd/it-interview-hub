@@ -7,7 +7,7 @@ console.log('app.js loaded, Vue available:', !!Vue);
 const App = {
   setup() {
     const state = reactive({
-      page: 'home', loading: true, searchQuery: '',
+      page: 'home', loading: false, searchQuery: '',
       isAdmin: false, theme: 'system', sidebarOpen: false,
       // Stats
       stats: { categories: 0, questions: 0, positions: 0, aiGenerated: 0, rootCategories: 0 },
@@ -62,6 +62,8 @@ const App = {
         state.aiConfig.model = localStorage.getItem('ai_model') || 'deepseek-chat';
         handleHash();
         window.addEventListener('hashchange', handleHash);
+        // Force DOM update by setting loading after a microtask
+        await nextTick();
         state.loading = false;
         console.log('6. Loading complete!');
       } catch(e) {
