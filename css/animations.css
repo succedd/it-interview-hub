@@ -1,0 +1,36 @@
+/* Page transition */
+.page-enter { animation: page-in .2s ease both; }
+@keyframes page-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Card hover */
+.card-hover { transition: transform .15s ease, box-shadow .15s ease; }
+
+/* Button press */
+.btn:active { transform: scale(.96); }
+
+/* Modal */
+.modal-mask { animation: fade-in .2s ease; }
+.modal { animation: modal-in .2s ease; }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modal-in { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: scale(1); } }
+
+/* Toast */
+@keyframes toast-in { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes toast-out { to { opacity: 0; transform: translateX(40px); } }
+.toast.out { animation: toast-out .25s ease forwards; }
+
+/* Blink */
+@keyframes blink { 0%,50% { opacity: 1; } 50.01%,100% { opacity: 0; } }
+
+/* Shimmer skeleton */
+@keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+/* Expand tree */
+.tree-children { animation: expand .3s ease; }
+@keyframes expand { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 2000px; } }
+
+/* Charts fade */
+.chart-fade { animation: chart-in .5s ease; }
+@keyframes chart-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* Number roll handled in JS via transition; this is fallback */
