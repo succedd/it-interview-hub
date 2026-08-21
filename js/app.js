@@ -42,21 +42,32 @@ const App = {
 
     // ---- Init ----
     onMounted(async () => {
-      Utils.applyTheme(localStorage.getItem('theme') || 'system');
-      await AuthService.init();
-      state.isAdmin = AuthService.isLoggedIn();
-      await DBService.initDatabase();
-      state.systemInitialized = true;
-      await SearchService.buildIndex();
-      await loadStats();
-      await loadHomeData();
-      // Load AI config
-      state.aiConfig.apiKey = localStorage.getItem('ai_api_key') || '';
-      state.aiConfig.baseUrl = localStorage.getItem('ai_base_url') || 'https://api.deepseek.com';
-      state.aiConfig.model = localStorage.getItem('ai_model') || 'deepseek-chat';
-      handleHash();
-      window.addEventListener('hashchange', handleHash);
-      state.loading = false;
+      try {
+        Utils.applyTheme(localStorage.getItem('theme') || 'system');
+        await AuthService.init();
+        state.isAdmin = AuthService.isLoggedIn();
+        console.log('1. Auth done');
+        await DBService.initDatabase();
+        console.log('2. DB init done');
+        state.systemInitialized = true;
+        await SearchService.buildIndex();
+        console.log('3. Search index done');
+        await loadStats();
+        console.log('4. Stats done');
+        await loadHomeData();
+        console.log('5. Home data done');
+        state.aiConfig.apiKey = localStorage.getItem('ai_api_key') || '';
+        state.aiConfig.baseUrl = localStorage.getItem('ai_base_url') || 'https://api.deepseek.com';
+        state.aiConfig.model = localStorage.getItem('ai_model') || 'deepseek-chat';
+        handleHash();
+        window.addEventListener('hashchange', handleHash);
+        state.loading = false;
+        console.log('6. Loading complete!');
+      } catch(e) {
+        console.error('Init error:', e);
+        document.getElementById('error-display').style.display = 'block';
+        document.getElementById('error-display').innerHTML = '<strong>Init Error:</strong> ' + e.message + '<br>' + (e.stack || '');
+      }
     });
 
     function handleHash() {
